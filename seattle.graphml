@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d1" for="node" attr.name="followers" attr.type="long"/>
+<key id="d0" for="node" attr.name="gender" attr.type="long"/>
+<graph edgedefault="directed"><node id="rachelerman">
+  <data key="d0">1</data>
+  <data key="d1">30000</data>
+</node>
+<node id="mattmcilwain">
+  <data key="d0">0</data>
+  <data key="d1">25000</data>
+</node>
+<node id="DaveParkerSEA">
+  <data key="d0">0</data>
+  <data key="d1">15000</data>
+</node>
+<node id="toddbishop">
+  <data key="d0">0</data>
+  <data key="d1">20000</data>
+</node>
+<node id="ashannstew">
+  <data key="d0">1</data>
+  <data key="d1">12000</data>
+</node>
+<node id="LeslieFeinzaig">
+  <data key="d0">1</data>
+  <data key="d1">18000</data>
+</node>
+<edge source="rachelerman" target="mattmcilwain"/>
+<edge source="rachelerman" target="DaveParkerSEA"/>
+<edge source="rachelerman" target="toddbishop"/>
+<edge source="rachelerman" target="ashannstew"/>
+<edge source="rachelerman" target="LeslieFeinzaig"/>
+</graph></graphml>

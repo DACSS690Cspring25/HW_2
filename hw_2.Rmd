@@ -1,0 +1,131 @@
+---
+title: "hw_2"
+author: "Aiyman Akbar"
+date: "2025-04-8"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# import necessary library
+library(igraph)
+
+#set correct working directory for the rest of the document
+setwd("/Users/aiymanakbar/Documents/DACSS690C/hw_2")
+```
+
+1) Pre-HW files:
+
+```{r}
+#load up files for use in this document
+
+peru <- read_graph("peru.graphml", format = "graphml")
+
+seattle <- read_graph("seattle.graphml", format = "graphml")
+
+fifa <- read_graph("fifa_countries.graphml", format = "graphml")
+```
+
+```{r}
+#plot the files for visualization of the data I am working with
+
+#plot Peru 
+plot(peru,
+     vertex.label = NA, vertex.size = 6,
+     main = "Peru")
+
+#plot Seattle 
+plot(seattle,
+     vertex.label = NA, vertex.size = 6,
+     main = "Seattle")
+
+#plot FIFA
+plot(fifa,
+     vertex.label = V(fifa)$name, vertex.size = 5, edge.width = E(fifa)$weight,
+     main = "FIFA Countries")
+
+```
+
+2) Use the Peruvian graph, and prepare a code in R to answer:
+
+Use the Louvain and Leiden algorithm , and present a plot of both results. Which one     should be chosen?
+
+Louvian Algorithm:
+```{r}
+#Louvain algorithm plot
+louvain_peru <- cluster_louvain(peru)
+plot(louvain_peru, peru, vertex.label = NA, vertex.size = 6,
+     main = "Louvain - EB")
+
+#Louvain algorithm modularity 
+louvain_mod <- modularity(louvain_peru)
+cat("Louvain Modularity:", louvain_mod, "\n")
+```
+
+"Leiden" Algorithm:
+```{r}
+#Because Leiden isnt supported in R through igraph I used Walktrap instead
+walktrap_peru <- cluster_walktrap(peru)
+plot(walktrap_peru, peru, vertex.label = NA, vertex.size = 6,
+     main = "Walktrap - Peru")
+
+# Walktrap algorithm modularity 
+walktrap_mod <- modularity(walktrap_peru)
+cat("Walktrap Modularity:", walktrap_mod, "\n")
+```
+
+After using both the Louvain and "Leiden" algorithms and presenting a plot for each, the Louvian algorithm should be chosen. It produced three different communities, including one clearly separated family and two other heavily packed clusters, making the structure of elite relationships easier to understand.
+
+The "Leiden" algorithm, I used the Walktrap algorithm here instead as the actual Leiden algorithm doesn't really work so well with R, also identified three communities, but its grouping was less clear and did not improve the modularity score or the interpretability, in my opinion. Also in the tutorial it mentioned that the Lauvian algorithm is more computationally efficient than these others. 
+
+
+3) Use the Seattle graph, and prepare a code in R to answer:
+
+Use the Louvain and Leiden algorithm. Did any of them work? If it did not work, choose two other algorithms, and plot the result. Which one should be chosen from the two algorithms you chose?
+
+```{r}
+
+# Walktrap algorithm:
+walktrap_seattle <- cluster_walktrap(seattle)
+plot(walktrap_seattle, seattle, vertex.label = NA, vertex.size = 6,
+     main = "Seattle - Walktrap")
+
+modularity(walktrap_seattle)
+
+# Girvan-Newman algorithm
+betw_seattle <- cluster_edge_betweenness(seattle)
+plot(betw_seattle, seattle, vertex.label = NA, vertex.size = 6,
+     main = "Seattle - EB")
+
+modularity(betw_seattle)
+```
+
+After attempting to use both the Louvain and "Leiden" algorithms on the Seattle graph, I found that Louvain did not work as it only works on undirected graphs, which Seattle is not. After figuring this out, I moved forward using two alternative algorithms, Walktrap and Girvan-Newman.
+
+The Walktrap algorithm detected multiple communities, but the structure was not very accurately grouped, and the clusters were difficult to interpret in the context of what the Seattle graph interprets which is Twitter connections. On the other hand, the Girvan-Newman algorithm identifies communities by removing the most central edges, and because of this alternative method it produced more coherent groupings and clearer separations between influential categories.
+
+In my opinion, Girvan-Newman should be chosen. Not only did it produce more interpretable results, but it also better reflected the uneven nature of influence on Twitter, where relationships are not always mutual, like when one person follows another but doesnt get followed back. Even through the Louvain algorithm is more computationally efficient, but Girvan-Newman was more effective in this specific case due to the graph’s directional structure.
+
+
+4) Use the Fifa graph, projecting only the countries (netwrom of countries), and report:
+
+  Use the Girvan-Newman and Leiden algorithm, and present a plot of both results. Which one should be chosen?
+
+```{r}
+# Girvan-Newman algorithm
+gn_fifa <- cluster_edge_betweenness(fifa, weights = E(fifa)$weight)
+plot(gn_fifa, fifa, vertex.label = V(fifa)$name, vertex.size = 6,
+     main = "FIFA Countries - Girvan-Newman")
+
+modularity(gn_fifa)
+
+# Walktrap algorithm
+walktrap_fifa <- cluster_walktrap(fifa, weights = E(fifa)$weight)
+plot(walktrap_fifa, fifa, vertex.label = V(fifa)$name, vertex.size = 6,
+     main = "FIFA Countries - Walktrap")
+
+modularity(walktrap_fifa)
+```
+
+The FIFA graph used shows how countries are connected based on having players in the same clubs. After projecting the bipartite network into just countries, each edge shows how many clubs two countries share players through. To find communities, I ran two algorithms. First was Girvan-Newman, which finds groups by removing the most important edges then I ran Walktrap like in the previous parts, which in this case grouped countries based on short random walks.
+
+Out of the results they both gave me Girvan-Newman was better. The clusters it found were easier to understand and felt more meaningful based on how countries actually connect through clubs. It also worked well with the edge weights in the graph and happend to match what was shown in the tutorial for a similarly structured network.
